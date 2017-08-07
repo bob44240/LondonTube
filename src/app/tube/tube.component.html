@@ -1,0 +1,15 @@
+<div>
+
+  <label>There are {{noDups.length}} stations </label>
+  <br>
+  <br>
+  Select starting station
+
+  <select>
+    <option *ngFor="let value of noDups" >{{value}}</option>
+  </select>
+
+  Enter count for search <input type="number" id="myNumber" value="1" min="1" max="10" step="1">
+
+  <button>Search</button>
+</div>
