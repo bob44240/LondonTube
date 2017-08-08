@@ -28,7 +28,7 @@ Before running the tests make sure you are serving the app via `ng serve`.
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 
-#London Tube
+##London Tube
 Given a list of London Tube stations and lines, write an application to answer the following question:  What stations are N stops from East Ham?  For stations with multiple routes include the station only if the minimum number of stops = N.  Print out the results in alphabetical order.
 For example, if N = 5, the complete answer would be:
 
@@ -68,3 +68,7 @@ Resources
 •	List of Tube stations: https://www.doogal.co.uk/london_stations.php (select "Download" then "Tube line data CSV" to download a list of stations and their lines)
 
 
+[(ngModel)]="selectedStation"
+
+https://www.npmjs.com/package/d3-tube-map
+https://bl.ocks.org/johnwalley/9b6d8af7a209b95c5b9dff99073db420

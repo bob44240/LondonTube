@@ -1,15 +1,28 @@
-<div>
+<div class="col-md-12">
+    <table class="table table-hover">
+      <tbody>
+      <tr>
+        <label>There are {{noDups.length}} stations </label>
+      </tr>
+      <tr>
+        Select starting station
 
-  <label>There are {{noDups.length}} stations </label>
-  <br>
-  <br>
-  Select starting station
+        <select name="'station" (change)="station($event)">
+          <option *ngFor="let value of noDups">{{value}}</option>
+        </select>
+      </tr>
 
-  <select>
-    <option *ngFor="let value of noDups" >{{value}}</option>
-  </select>
+      <tr>
+        Enter count for search <input type="number" id="myNumber" value="1" min="1" max="10" step="1">
+      </tr>
+      <tr>
+        <button class="btn btn-primary" (click)="search()">Search</button>
+      </tr>
+      <tr>
 
-  Enter count for search <input type="number" id="myNumber" value="1" min="1" max="10" step="1">
-
-  <button>Search</button>
+      </tr>
+      </tbody>
+    </table>
 </div>
+
+
