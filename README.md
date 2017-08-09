@@ -68,7 +68,5 @@ Resources
 •	List of Tube stations: https://www.doogal.co.uk/london_stations.php (select "Download" then "Tube line data CSV" to download a list of stations and their lines)
 
 
-[(ngModel)]="selectedStation"
-
 https://www.npmjs.com/package/d3-tube-map
 https://bl.ocks.org/johnwalley/9b6d8af7a209b95c5b9dff99073db420

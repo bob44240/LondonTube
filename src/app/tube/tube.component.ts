@@ -9,34 +9,27 @@ export class TubeComponent implements OnInit {
   private t = new TubeInfo();
   private tubeLines_raw = this.t.linkList;
   private toFromList;
-  private stationList;
-  private selectedStation ="Abbey Road";
+  private selectedStation = 'Abbey Road';
   public noDups = [];
   public Results;
   public displayResults = false;
   public SearchCriteria;
   private stationNodes;
   private pathLen = 5 ;
-  // public selectedStation;
-  // public stops = 0;
-
-  // private path = [];
-  // private paths = [];
 
   constructor() {
     // console.log(this.tubeLines_raw);
-    this.toFromList= this.tubeLines_raw.split(':');
+    this.toFromList = this.tubeLines_raw.split(':');
     // console.log(this.toFromList);
     var i = 0;
     this.stationNodes = this.toFromList.map(e => {
-      var temp = e.split(',');
+      const temp = e.split(',');
       return {
         id: i++,
         to: temp[1],
         from: temp[2]
       }
     })
-    // console.log(this.stationNodes)
     const step1 = this.toFromList.map(e => {
       const temp = e.split(',')[1];
       return temp;
@@ -48,10 +41,8 @@ export class TubeComponent implements OnInit {
       if (this.noDups.indexOf(e)<0){this.noDups.push(e)}
       return true;
     })
-
     // Sort result
     this.noDups.sort();
-    // console.log("DONE",this.noDups);
   }
   //
   station(eventData) {
@@ -62,7 +53,6 @@ export class TubeComponent implements OnInit {
     this.displayResults = false;
     // this.search(this.selectedStation);
     let stops = 0 ;
-    let pathCount = 0;
     let paths = [];
     paths.push(this.selectedStation);
     while (stops < this.pathLen) {
@@ -72,37 +62,27 @@ export class TubeComponent implements OnInit {
       paths.forEach(
         path => {
           console.log(path)
-          let stationArray = path.split(":");
-          let lastStop = stationArray.pop()
-          let results = this.searchPath(lastStop);
-          console.log(results);
+          const stationArray = path.split(':');
+          const lastStop = stationArray.pop()
+          const results = this.searchPath(lastStop);
           results.forEach(
               station => {
                 if (stationArray.indexOf(station) === -1) {
-                  let newPath = path + ":" + station;
-                  console.log("NewPath ", newPath)
+                  let newPath = path + ':' + station;
+                  console.log('NewPath ', newPath)
                   newPaths.push(newPath)
                 }  else {
-                  console.log(station , "already in path and was not added")
+                  console.log(station , 'already in path and was not added')
                 }
               }
           )
         }
       )
       paths = newPaths;
-       console.log(paths)
-      // console.log(newPaths)
     }
-    // Remove short paths - less than N stops
-    // const phase1 = paths.filter( e => {
-    //   const l = e.split(':');
-    //   return (l.length === this.pathLen + 1)
-    // })
-    // console.log(phase1)
     // Remove when shorter path exists to station
     let phase2 = paths.map( e => {
       const l = e.split(':');
-      // console.log(l)
       return l.pop();
     })
     console.log(phase2)
@@ -111,8 +91,6 @@ export class TubeComponent implements OnInit {
     // Remove duplicates
     phase2 = phase2.filter((e, index) => {
       const i = phase2.indexOf(e)
-      const l = phase2.lastIndexOf(e)
-      console.log(index,i,l)
       return (index === i)
     })
     // Remove short paths exceptions eg Canning Town
@@ -120,21 +98,17 @@ export class TubeComponent implements OnInit {
       let keepIt = true;
       paths.forEach(
           path => {
-            let stationArray = path.split(":");
-            console.log(e)
-            console.log(path)
-            console.log(stationArray.indexOf(e), this.pathLen)
+            const stationArray = path.split(':');
             const index = stationArray.indexOf(e)
             if (index > -1 && index < this.pathLen) {
-              //This result should be removed
+              // This result should be removed
               keepIt = false;
-              console.log(e , "has been removed")
+              console.log(e , 'has been removed')
             }
           }
       )
       return keepIt;
     })
-    console.log(paths)
     this.displayResults = true;
     this.Results = phase2;
   }
@@ -147,7 +121,6 @@ export class TubeComponent implements OnInit {
   //
   searchPath(station) {
     const path = [];
-    console.log('Searching for ', station);
     this.stationNodes.map(e => {
       if (e.from === station) {
         if (path.indexOf(e.to) === -1) {
@@ -160,7 +133,6 @@ export class TubeComponent implements OnInit {
           path.push(e.from)
         }
         // this.addToPaths()
-        // console.log(e)
       }
     })
     return path;
