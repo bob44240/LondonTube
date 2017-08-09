@@ -13,13 +13,18 @@
       </tr>
 
       <tr>
-        Enter count for search <input type="number" id="myNumber" value="1" min="1" max="10" step="1">
+        Enter count for search <input type="number" id="myNumber" value="1" min="1" max="10" step="1" (change)="setPathLen($event)">
       </tr>
       <tr>
         <button class="btn btn-primary" (click)="search()">Search</button>
       </tr>
       <tr>
-
+        {{SearchCriteria}}
+      </tr>
+      <tr *ngIf = "displayResults">
+        <ul *ngFor="let path of Results">
+          <li>{{path}}</li>
+        </ul>
       </tr>
       </tbody>
     </table>

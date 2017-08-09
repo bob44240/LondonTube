@@ -10,12 +10,18 @@ export class TubeComponent implements OnInit {
   private tubeLines_raw = this.t.linkList;
   private toFromList;
   private stationList;
-  public noDups=[];
+  private selectedStation;
+  public noDups = [];
+  public Results;
+  public displayResults = false;
+  public SearchCriteria;
   private stationNodes;
-  public selectedStation;
+  private pathLen = 1 ;
+  // public selectedStation;
+  // public stops = 0;
 
-  private path=[];
-  private paths=[];
+  // private path = [];
+  // private paths = [];
 
   constructor() {
     // console.log(this.tubeLines_raw);
@@ -48,18 +54,62 @@ export class TubeComponent implements OnInit {
     // console.log("DONE",this.noDups);
   }
   //
-  station(eventData){
+  station(eventData) {
     this.selectedStation = eventData.target.value;
-    this.search(this.selectedStation);
   }
   //
-  search(station) {
-    console.log(station);
-    console.log(this.searchPath(station));
-  }
-  //
-  addToPaths() {
+  searchForPaths () {
+    this.displayResults = false;
+    // this.search(this.selectedStation);
+    let stops = 0 ;
+    let pathCount = 0;
+    let paths = [];
+    paths.push(this.selectedStation);
+    while (stops < this.pathLen) {
+      stops++;
+      console.log(stops, paths);
+      let newPaths = [];
+      paths.forEach(
+        path => {
+          console.log(path)
+          let stationArray = path.split(":");
+          let lastStop = stationArray.pop()
+          let results = this.searchPath(lastStop);
+          console.log(results);
+          results.forEach(
+              station => {
+                if (stationArray.indexOf(station) === -1) {
+                  let newPath = path + ":" + station;
+                  console.log("NewPath ", newPath)
+                  newPaths.push(newPath)
+                }
+                else {
+                  console.log(station , "already in path and was not added")
+                }
+                // Can we add this station to the path?
 
+              }
+          )
+        }
+      )
+      paths = newPaths;
+      console.log(paths)
+      console.log(newPaths)
+    }
+    // Remove short paths
+    this.Results = paths.filter( e => {
+      const l = e.split(':');
+      return (l === this.pathLen)
+    })
+    console.log("Completed ===============================================");
+    this.displayResults = true;
+    this.Results = paths;
+  }
+  //
+  search() {
+    // console.log(this.searchPath(station));
+    this.SearchCriteria = 'Looking for stations ' + this.pathLen + ' stops from ' + this.selectedStation;
+    this.searchForPaths();
   }
   //
   searchPath(station) {
@@ -67,19 +117,25 @@ export class TubeComponent implements OnInit {
     console.log('Searching for ', station);
     this.stationNodes.map(e => {
       if (e.from === station) {
-        path.push(e.to)
-        console.log(e)
+        if (path.indexOf(e.to) === -1)path.push(e.to)
+        // console.log(e)
       }
       if (e.to === station) {
-        console.log(path.indexOf(e.from))
-        path.push(e.from)
-        this.addToPaths()
-        console.log(e)
+        // console.log(path.indexOf(e.from))
+        if (path.indexOf(e.from) === -1) {
+          path.push(e.from)
+        }
+        // this.addToPaths()
+        // console.log(e)
       }
     })
     return path;
   }
 
+  setPathLen(event) {
+    console.log(event)
+    this.pathLen = event.target.value;
+  }
   ngOnInit() {
   }
 }
