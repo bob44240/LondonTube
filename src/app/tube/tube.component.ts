@@ -82,18 +82,15 @@ export class TubeComponent implements OnInit {
                   let newPath = path + ":" + station;
                   console.log("NewPath ", newPath)
                   newPaths.push(newPath)
-                }
-                else {
+                }  else {
                   console.log(station , "already in path and was not added")
                 }
-                // Can we add this station to the path?
-
               }
           )
         }
       )
       paths = newPaths;
-      // console.log(paths)
+       console.log(paths)
       // console.log(newPaths)
     }
     // Remove short paths - less than N stops
@@ -108,21 +105,36 @@ export class TubeComponent implements OnInit {
       // console.log(l)
       return l.pop();
     })
+    console.log(phase2)
     // Sort results
     phase2 = phase2.sort()
     // Remove duplicates
-    phase2 = phase2.filter(e => {
+    phase2 = phase2.filter((e, index) => {
       const i = phase2.indexOf(e)
       const l = phase2.lastIndexOf(e)
-      return (i === l)
+      console.log(index,i,l)
+      return (index === i)
     })
-    // Remove short paths
+    // Remove short paths exceptions eg Canning Town
     phase2 = phase2.filter(e => {
-      const i = phase2.indexOf(e)
-      const l = phase2.lastIndexOf(e)
-      return (i === l)
+      let keepIt = true;
+      paths.forEach(
+          path => {
+            let stationArray = path.split(":");
+            console.log(e)
+            console.log(path)
+            console.log(stationArray.indexOf(e), this.pathLen)
+            const index = stationArray.indexOf(e)
+            if (index > -1 && index < this.pathLen) {
+              //This result should be removed
+              keepIt = false;
+              console.log(e , "has been removed")
+            }
+          }
+      )
+      return keepIt;
     })
-    console.log(phase2)
+    console.log(paths)
     this.displayResults = true;
     this.Results = phase2;
   }
@@ -138,8 +150,9 @@ export class TubeComponent implements OnInit {
     console.log('Searching for ', station);
     this.stationNodes.map(e => {
       if (e.from === station) {
-        if (path.indexOf(e.to) === -1)path.push(e.to)
-        // console.log(e)
+        if (path.indexOf(e.to) === -1) {
+          path.push(e.to)
+        }
       }
       if (e.to === station) {
         // console.log(path.indexOf(e.from))
