@@ -7,48 +7,63 @@ import {TubeInfo} from '../tube-info';
 })
 export class TubeComponent implements OnInit {
   private t = new TubeInfo();
-  private tubeLines_raw = this.t.linkList;
+  private tubeLines_raw = this.t.linkList;  // Tube info class holds the raw data
   private toFromList;
   private selectedStation = 'Abbey Road';
-  public noDups = [];
+  private pathLen = 5 ;
+  private noDups = [];  // Holds list of stations
+  private stationNodes;
+  //
+  // These vars are used by html template
   public Results;
   public displayResults = false;
   public SearchCriteria;
-  private stationNodes;
-  private pathLen = 5 ;
-
+  public SearchResults;
+  //
+  //
   constructor() {
-    // console.log(this.tubeLines_raw);
+    this.createStationNodesArray();
+    this.createStationList();
+  }
+  //
+  createStationNodesArray() {
+    // Start by taking the raw station data and building an array
     this.toFromList = this.tubeLines_raw.split(':');
-    // console.log(this.toFromList);
-    var i = 0;
+    let i = 0;
     this.stationNodes = this.toFromList.map(e => {
-      const temp = e.split(',');
-      return {
-        id: i++,
-        to: temp[1],
-        from: temp[2]
-      }
+        const temp = e.split(',');
+        return {
+            id: i++,
+            to: temp[1],
+            from: temp[2]
+        }
     })
-    const step1 = this.toFromList.map(e => {
-      const temp = e.split(',')[1];
-      return temp;
-      })
+  }
+  //
+  // Create alphabetized list of stations for display
+  createStationList() {
+  const step1 = this.toFromList.map(e => {
+    const temp = e.split(',')[1];
+    return temp;
+    })
 
     this.noDups.push(step1[0]);
 
     step1.filter(e => {
-      if (this.noDups.indexOf(e)<0){this.noDups.push(e)}
+      if (this.noDups.indexOf(e) < 0){this.noDups.push(e)}
       return true;
     })
     // Sort result
     this.noDups.sort();
   }
   //
+  // Handle change of station event
   station(eventData) {
     this.selectedStation = eventData.target.value;
   }
-  //
+  // This does all the heavy lifting
+  // It starts with the selected station and the number of stops
+  // and builds possible paths
   searchForPaths () {
     this.displayResults = false;
     // this.search(this.selectedStation);
@@ -58,7 +73,7 @@ export class TubeComponent implements OnInit {
     while (stops < this.pathLen) {
       stops++;
       console.log(stops, paths);
-      let newPaths = [];
+      const newPaths = [];
       paths.forEach(
         path => {
           console.log(path)
@@ -68,7 +83,7 @@ export class TubeComponent implements OnInit {
           results.forEach(
               station => {
                 if (stationArray.indexOf(station) === -1) {
-                  let newPath = path + ':' + station;
+                  const newPath = path + ':' + station;
                   console.log('NewPath ', newPath)
                   newPaths.push(newPath)
                 }  else {
@@ -80,19 +95,25 @@ export class TubeComponent implements OnInit {
       )
       paths = newPaths;
     }
-    // Remove when shorter path exists to station
+    //
+    // We're done calculating all of the possible paths
+    // so next we need to clean up the results
+    // First step in the clean-up is to remove a path when a when shorter path exists to station
     let phase2 = paths.map( e => {
       const l = e.split(':');
       return l.pop();
     })
-    console.log(phase2)
-    // Sort results
+    //
+    // Next we need to sort the results alphabetically which is a requirement of the spec.
     phase2 = phase2.sort()
-    // Remove duplicates
+    //
+    // Next we need to remove duplicates - sometime there are two paths to the same station that meet our requirements
     phase2 = phase2.filter((e, index) => {
       const i = phase2.indexOf(e)
       return (index === i)
     })
+    //
+    // The last step is to remove a result when a shorter valid path to the station exists
     // Remove short paths exceptions eg Canning Town
     phase2 = phase2.filter(e => {
       let keepIt = true;
@@ -109,16 +130,20 @@ export class TubeComponent implements OnInit {
       )
       return keepIt;
     })
+    //
+    // Now we can display the results
     this.displayResults = true;
     this.Results = phase2;
+    this.SearchResults = 'Found ' + phase2.length + ' stations meeting criteria.  Here is the list:'
   }
   //
+  // This handles the click event from the search button
   search() {
-    // console.log(this.searchPath(station));
     this.SearchCriteria = 'Looking for stations ' + this.pathLen + ' stops from ' + this.selectedStation;
     this.searchForPaths();
   }
   //
+  // This method finds the stations that are connected to provided station parameter
   searchPath(station) {
     const path = [];
     this.stationNodes.map(e => {
@@ -132,14 +157,13 @@ export class TubeComponent implements OnInit {
         if (path.indexOf(e.from) === -1) {
           path.push(e.from)
         }
-        // this.addToPaths()
       }
     })
     return path;
   }
-
+  //
+  // This handles a change to the input path length
   setPathLen(event) {
-    console.log(event)
     this.pathLen = event.target.value;
   }
   ngOnInit() {
