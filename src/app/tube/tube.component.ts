@@ -16,7 +16,7 @@ export class TubeComponent implements OnInit {
   public displayResults = false;
   public SearchCriteria;
   private stationNodes;
-  private pathLen = 1 ;
+  private pathLen = 5 ;
   // public selectedStation;
   // public stops = 0;
 
@@ -93,15 +93,23 @@ export class TubeComponent implements OnInit {
         }
       )
       paths = newPaths;
-      console.log(paths)
-      console.log(newPaths)
+      // console.log(paths)
+      // console.log(newPaths)
     }
-    // Remove short paths
-    this.Results = paths.filter( e => {
+    // Remove short paths - less than N stops
+    const phase1 = paths.filter( e => {
       const l = e.split(':');
-      return (l === this.pathLen)
+      return (l.length === this.pathLen + 1)
     })
-    console.log("Completed ===============================================");
+    console.log(phase1)
+    // Remove when shorter path exists to station
+    const phase2 = paths.map( e => {
+      const l = e.split(':');
+      console.log(l)
+      return l.pop();
+    })
+    phase2 = phase2.sort()
+    console.log(phase2)
     this.displayResults = true;
     this.Results = paths;
   }
