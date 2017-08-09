@@ -10,7 +10,7 @@ export class TubeComponent implements OnInit {
   private tubeLines_raw = this.t.linkList;
   private toFromList;
   private stationList;
-  private selectedStation;
+  private selectedStation ="Abbey Road";
   public noDups = [];
   public Results;
   public displayResults = false;
@@ -97,21 +97,34 @@ export class TubeComponent implements OnInit {
       // console.log(newPaths)
     }
     // Remove short paths - less than N stops
-    const phase1 = paths.filter( e => {
-      const l = e.split(':');
-      return (l.length === this.pathLen + 1)
-    })
-    console.log(phase1)
+    // const phase1 = paths.filter( e => {
+    //   const l = e.split(':');
+    //   return (l.length === this.pathLen + 1)
+    // })
+    // console.log(phase1)
     // Remove when shorter path exists to station
-    const phase2 = paths.map( e => {
+    let phase2 = paths.map( e => {
       const l = e.split(':');
-      console.log(l)
+      // console.log(l)
       return l.pop();
     })
+    // Sort results
     phase2 = phase2.sort()
+    // Remove duplicates
+    phase2 = phase2.filter(e => {
+      const i = phase2.indexOf(e)
+      const l = phase2.lastIndexOf(e)
+      return (i === l)
+    })
+    // Remove short paths
+    phase2 = phase2.filter(e => {
+      const i = phase2.indexOf(e)
+      const l = phase2.lastIndexOf(e)
+      return (i === l)
+    })
     console.log(phase2)
     this.displayResults = true;
-    this.Results = paths;
+    this.Results = phase2;
   }
   //
   search() {
